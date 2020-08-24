@@ -8,3 +8,5 @@
 
   - name: Add SSH keys to remote hosts
     authorized_key: user=admin key="{{ lookup('file', "/home/admin/Downloads/key.pub") }}"
+    
+   # здесь был Паша
