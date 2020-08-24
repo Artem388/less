@@ -10,3 +10,4 @@
     authorized_key: user=admin key="{{ lookup('file', "/home/admin/Downloads/key.pub") }}"
     
    # здесь был Паша
+  #если вы читаете это значит я подключил идею
