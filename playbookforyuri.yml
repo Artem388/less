@@ -1,10 +1,25 @@
 ---
-- hosts: all
+- hosts: CentOS
   become: yes
+  remote_user: root
   tasks:
 
-  - name: Add user to remote hosts
-    user: name=admin groups=sudo shell=/bin/bash password=$6$KjyfytoJ$hoQdVIGcRZgje2HpHFf8ldvooLfY774SrEpHkADUf3d7uGBSwVLeMXsPIfb4l2TaXWvprMz868ZbH8HLaiDeh.
+  - name: Добавить пользователя 'lnxcfg' с добавлением его в группу 'wheel'. В CentOS 7 группа 'wheel' даёт права sudo
+    user:
+      name: lnxcfg
+      shell: /bin/bash
+      groups: wheel
+      append: yes
 
-  - name: Add SSH keys to remote hosts
-    authorized_key: user=admin key="{{ lookup('file', "/home/admin/Downloads/key.pub") }}"
+  - name: Создать 2048-битовый SSH ключ для lnxcfg в ~lnxcfg/.ssh/id_rsa
+    user:
+      name: lnxcfg
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+
+  - name: Установить authorized key из файла id_rsa.pub
+    authorized_key:
+      user: lnxcfg
+      state: present
+      key: "{{ lookup('file', '/home/lnxcfg/.ssh/id_rsa.pub') }}"
