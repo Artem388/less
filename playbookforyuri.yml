@@ -4,22 +4,31 @@
   remote_user: root
   tasks:
 
-  - name: Добавить пользователя 'lnxcfg' с добавлением его в группу 'wheel'. В CentOS 7 группа 'wheel' даёт права sudo
+  - name: Создание пользователя
     user:
-      name: lnxcfg
+      name: TEST2
       shell: /bin/bash
       groups: wheel
       append: yes
 
-  - name: Создать 2048-битовый SSH ключ для lnxcfg в ~lnxcfg/.ssh/id_rsa
+  - name: Ключ
     user:
-      name: lnxcfg
+      name: TEST2
       generate_ssh_key: yes
       ssh_key_bits: 2048
       ssh_key_file: .ssh/id_rsa
 
   - name: Установить authorized key из файла id_rsa.pub
     authorized_key:
-      user: lnxcfg
+      user: TEST2
       state: present
-      key: "{{ lookup('file', '/home/lnxcfg/.ssh/id_rsa.pub') }}"
+      key: "{{ lookup('file', '/home/artem/.ssh/id_rsa.pub') }}"
+
+  - name: Делаем пользователя СУПЕРПОЛЬЗОВАТЕЛЕМ
+    lineinfile:
+      path: /etc/sudoers
+      regexp: '^root    ALL=(ALL)       ALL'
+      insertafter: 'root'
+      line: 'TEST2    ALL=(ALL) NOPASSWD:      ALL'
+      state: present
+
