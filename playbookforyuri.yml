@@ -2,33 +2,7 @@
 - hosts: CentOS
   become: yes
   remote_user: root
-  tasks:
 
-  - name: Создание пользователя
-    user:
-      name: TEST2
-      shell: /bin/bash
-      groups: wheel
-      append: yes
-
-  - name: Ключ
-    user:
-      name: TEST2
-      generate_ssh_key: yes
-      ssh_key_bits: 2048
-      ssh_key_file: .ssh/id_rsa
-
-  - name: Установить authorized key из файла id_rsa.pub
-    authorized_key:
-      user: TEST2
-      state: present
-      key: "{{ lookup('file', '/home/artem/.ssh/id_rsa.pub') }}"
-
-  - name: Делаем пользователя СУПЕРПОЛЬЗОВАТЕЛЕМ
-    lineinfile:
-      path: /etc/sudoers
-      regexp: '^root    ALL=(ALL)       ALL'
-      insertafter: 'root'
-      line: 'TEST2    ALL=(ALL) NOPASSWD:      ALL'
-      state: present
+  roles:
+    - create_user
 
