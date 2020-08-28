@@ -1,0 +1,28 @@
+---
+  - name: Create user
+    user:
+      name: '{{ user }}'
+      shell: /bin/bash
+      groups: wheel
+      append: yes
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+
+
+  - name: Copy ssh key
+    authorized_key:
+      user: '{{ user }}'
+      state: present
+      key: "{{ lookup('file', '/home/artem/.ssh/id_rsa.pub') }}"
+
+
+  - name: Creating a root user
+    lineinfile:
+      path: /etc/sudoers
+      regexp: '^root    ALL=(ALL)       ALL'
+      insertafter: 'root'
+      line: '{{ user }}    ALL=(ALL) NOPASSWD:      ALL'
+      state: present
+
+
